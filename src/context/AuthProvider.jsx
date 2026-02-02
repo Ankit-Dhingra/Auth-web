@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState, useCallback } from "react";
 import { getUser } from "../services/auth.service";
 
 export const AuthContext = createContext(null);
@@ -8,8 +8,8 @@ const AuthProvider = ({ children }) => {
   const [status, setStatus] = useState("loading");
   // "loading" | "authenticated" | "unauthenticated"
 
-  useEffect(() => {
-    const fetchUser = async () => {
+  // 🔑 single source of truth
+  const refreshUser = useCallback(async () => {
     try {
       const res = await getUser();
       const userData = res?.data?.data;
@@ -23,24 +23,33 @@ const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       // 401 is NORMAL here
-      console.log(error)
       setUser(null);
       setStatus("unauthenticated");
     }
-  };
-    fetchUser();
-  },[]);
+  }, []);
+
+  // run once on app load
+  useEffect(() => {
+    refreshUser();
+  }, [refreshUser]);
 
   const value = {
     user,
     status,
     isAuthenticated: status === "authenticated",
-    isVerified: user ? user.isEmailVerified && user.isMobileVerified : false,
-    setUser,
-    setStatus
+    isVerified: user
+      ? user.isEmailVerified && user.isMobileVerified
+      : false,
+    setUser,       // optional (can remove later)
+    setStatus,     // optional
+    refreshUser,   // ✅ THIS is what you needed
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export default AuthProvider;
