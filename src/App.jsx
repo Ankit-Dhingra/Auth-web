@@ -6,10 +6,12 @@ import Verification from "./pages/Verification";
 import AuthLayout from "./Components/layouts/AuthLayout";
 import RequireVerification from "./Components/layouts/RequireVerification";
 import LoggedInLayout from "./Components/layouts/LoggedInLayout";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
   return (
     <div>
+      <Toaster position="top-center" />
       <Routes>
         <Route element={<LoggedInLayout />}>
           <Route path="/login" element={<LoginPage />} />

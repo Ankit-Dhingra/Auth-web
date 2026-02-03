@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signUp } from "../services/auth.service";
 import { useAuth } from "../hooks/useAuth";
+import toast from "react-hot-toast";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -13,23 +14,87 @@ const SignUp = () => {
     mobile: "",
   });
 
+  const [errors, setErrors] = useState({});
+
+  const validateField = (name, value, formData) => {
+    switch (name) {
+      case "firstName":
+        if (!value.trim()) return "First name is required";
+        if (value.length > 100) return "Max 100 characters allowed";
+        if (!/^[a-zA-Z\s]+$/.test(value)) return "Only letters allowed";
+        return "";
+
+      case "lastName":
+        if (value && value.length > 100) return "Max 100 characters allowed";
+        if (value && !/^[a-zA-Z\s]+$/.test(value))
+          return "Only letters allowed";
+        return "";
+
+      case "email":
+        if (!value) return "Email is required";
+        if (!/^\S+@\S+\.\S+$/.test(value)) return "Invalid email address";
+        return "";
+
+      case "password":
+        if (!value) return "Password is required";
+        if (value.length < 8) return "Password must be at least 8 characters";
+        return "";
+
+      case "confirmPassword":
+        if (value !== formData.password) return "Passwords do not match";
+        return "";
+
+      case "mobile":
+        if (!value) return "Mobile number is required";
+        if (!/^\d{10}$/.test(value)) return "Mobile number must be 10 digits";
+        return "";
+
+      default:
+        return "";
+    }
+  };
+
   const { setUser, setStatus } = useAuth();
 
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === "mobile" && !/^\d*$/.test(value)) return;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+    }));
+    const errorMessage = validateField(name, value, {
+      ...formData,
+      [name]: value,
+    });
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: errorMessage,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    let newErrors = {};
+
+    Object.keys(formData).forEach((key) => {
+      const error = validateField(key, formData[key], formData);
+      if (error) newErrors[key] = error;
+    });
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      toast.error("Please fix the errors");
+      return;
+    }
     try {
       const response = await signUp(formData);
-      console.log("Sign up response:", response);
+      toast.success("Account created successfully");
       setUser(response?.data?.data?.user);
       setStatus("authenticated");
       if (
@@ -39,6 +104,7 @@ const SignUp = () => {
         navigate("/verification");
       }
     } catch (error) {
+      toast.error(error?.response?.data?.message || "Signup failed");
       console.error("Error during sign up:", error);
     }
   };
@@ -48,7 +114,11 @@ const SignUp = () => {
       {/* Left side – doodles / animation */}
       <div className="hidden md:block w-2/5 bg-gray-100">
         {/* animations later */}
-        <img  className="w-full h-full object-cover" src="/src/assets/Doodle2.jpg" alt="Doodle" />
+        <img
+          className="w-full h-full object-cover"
+          src="/src/assets/Doodle2.jpg"
+          alt="Doodle"
+        />
       </div>
 
       {/* Right side – form */}
@@ -84,6 +154,9 @@ const SignUp = () => {
                            focus:border-black"
               />
             </div>
+            {errors.firstName && (
+              <p className="text-xs text-red-500">{errors.firstName}</p>
+            )}
 
             {/* Last Name */}
             <div className="flex flex-col gap-1">
@@ -105,6 +178,9 @@ const SignUp = () => {
                            focus:border-black"
               />
             </div>
+            {errors.lastName && (
+              <p className="text-xs text-red-500">{errors.lastName}</p>
+            )}
 
             {/* Email */}
             <div className="flex flex-col gap-1">
@@ -126,6 +202,9 @@ const SignUp = () => {
                            focus:border-black"
               />
             </div>
+            {errors.email && (
+              <p className="text-xs text-red-500">{errors.email}</p>
+            )}
 
             {/* Password */}
             <div className="flex flex-col gap-1">
@@ -147,6 +226,9 @@ const SignUp = () => {
                            focus:border-black"
               />
             </div>
+            {errors.password && (
+              <p className="text-xs text-red-500">{errors.password}</p>
+            )}
 
             {/* Confirm Password */}
             <div className="flex flex-col gap-1">
@@ -168,6 +250,9 @@ const SignUp = () => {
                            focus:border-black"
               />
             </div>
+            {errors.confirmPassword && (
+              <p className="text-xs text-red-500">{errors.confirmPassword}</p>
+            )}
 
             {/* Mobile */}
             <div className="flex flex-col gap-1">
@@ -189,6 +274,9 @@ const SignUp = () => {
                            focus:border-black"
               />
             </div>
+            {errors.mobile && (
+              <p className="text-xs text-red-500">{errors.mobile}</p>
+            )}
 
             {/* Submit */}
             <button

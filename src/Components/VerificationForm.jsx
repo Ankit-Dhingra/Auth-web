@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { requestOTP, verifyOTP } from "../services/auth.service";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const VerificationForm = () => {
   const { user, refreshUser } = useAuth();
@@ -15,6 +16,38 @@ const VerificationForm = () => {
 
   const [emailTimer, setEmailTimer] = useState(0);
   const [mobileTimer, setMobileTimer] = useState(0);
+
+  const [emailOTPError, setEmailOTPError] = useState("");
+  const [mobileOTPError, setMobileOTPError] = useState("");
+
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [mobileLoading, setMobileLoading] = useState(false);
+
+  const validateOTP = (value) => {
+    if (!value) return "OTP is required";
+    if (!/^\d+$/.test(value)) return "Only numbers allowed";
+    if (value.length !== 6) return "OTP must be 6 digits";
+    return "";
+  };
+
+  const handleEmailOTPChange = (e) => {
+    const value = e.target.value;
+
+    // allow only numbers & max 6 digits
+    if (!/^\d*$/.test(value) || value.length > 6) return;
+
+    setEmailOTP(value);
+    setEmailOTPError(validateOTP(value));
+  };
+
+  const handleMobileOTPChange = (e) => {
+    const value = e.target.value;
+
+    if (!/^\d*$/.test(value) || value.length > 6) return;
+
+    setMobileOTP(value);
+    setMobileOTPError(validateOTP(value));
+  };
 
   // Redirect when both verified
   useEffect(() => {
@@ -52,27 +85,67 @@ const VerificationForm = () => {
 
   // Verify OTP
   const verifyEmailOTP = async () => {
-    await verifyOTP({
-      email: user?.email,
-      otp: emailOTP,
-      purpose: "signup",
-    });
-    setEmailOTP("");
-    setSentEmailOTP(false);
-    setEmailTimer(0);
-    await refreshUser();
+    const error = validateOTP(emailOTP);
+    setEmailOTPError(error);
+
+    if (error) {
+      toast.error("Invalid Email OTP");
+      return;
+    }
+
+    try {
+      setEmailLoading(true);
+
+      await verifyOTP({
+        email: user?.email,
+        otp: emailOTP,
+        purpose: "signup",
+      });
+
+      toast.success("Email verified successfully");
+
+      setEmailOTP("");
+      setSentEmailOTP(false);
+      setEmailTimer(0);
+
+      await refreshUser();
+    } catch (err) {
+      toast.error("Invalid or expired Email OTP");
+    } finally {
+      setEmailLoading(false);
+    }
   };
 
   const verifyMobileOTP = async () => {
-    await verifyOTP({
-      mobile: user?.mobile,
-      otp: mobileOTP,
-      purpose: "signup",
-    });
-    setMobileOTP("");
-    setSentMobileOTP(false);
-    setMobileTimer(0);
-    await refreshUser();
+    const error = validateOTP(mobileOTP);
+    setMobileOTPError(error);
+
+    if (error) {
+      toast.error("Invalid Mobile OTP");
+      return;
+    }
+
+    try {
+      setMobileLoading(true);
+
+      await verifyOTP({
+        mobile: user?.mobile,
+        otp: mobileOTP,
+        purpose: "signup",
+      });
+
+      toast.success("Mobile verified successfully");
+
+      setMobileOTP("");
+      setSentMobileOTP(false);
+      setMobileTimer(0);
+
+      await refreshUser();
+    } catch (err) {
+      toast.error("Invalid or expired Mobile OTP");
+    } finally {
+      setMobileLoading(false);
+    }
   };
 
   return (
@@ -132,14 +205,16 @@ const VerificationForm = () => {
                     type="text"
                     placeholder="Enter Email OTP"
                     value={emailOTP}
-                    onChange={(e) => setEmailOTP(e.target.value)}
+                    onChange={handleEmailOTPChange}
                     className="h-10 flex-1 rounded-md border border-gray-300 px-2 text-sm"
                   />
                   <button
                     onClick={verifyEmailOTP}
-                    className="h-10 px-3 text-sm bg-black text-white rounded-md hover:bg-black/90"
+                    disabled={emailLoading}
+                    className="h-10 px-3 text-sm bg-black text-white rounded-md
+             hover:bg-black/90 disabled:opacity-60"
                   >
-                    Verify
+                    {emailLoading ? "Verifying..." : "Verify"}
                   </button>
                 </div>
 
@@ -152,6 +227,10 @@ const VerificationForm = () => {
                     ? `Resend OTP in ${emailTimer}s`
                     : "Resend OTP"}
                 </button>
+
+                {emailOTPError && (
+                  <p className="text-xs text-red-500">{emailOTPError}</p>
+                )}
               </div>
             )}
           </div>
@@ -189,14 +268,17 @@ const VerificationForm = () => {
                     type="text"
                     placeholder="Enter Mobile OTP"
                     value={mobileOTP}
-                    onChange={(e) => setMobileOTP(e.target.value)}
+                    onChange={handleMobileOTPChange}
                     className="h-10 flex-1 rounded-md border border-gray-300 px-2 text-sm"
                   />
+
                   <button
                     onClick={verifyMobileOTP}
-                    className="h-10 px-3 text-sm bg-black text-white rounded-md hover:bg-black/90"
+                    disabled={mobileLoading}
+                    className="h-10 px-3 text-sm bg-black text-white rounded-md
+             hover:bg-black/90 disabled:opacity-60"
                   >
-                    Verify
+                    {mobileLoading ? "Verifying..." : "Verify"}
                   </button>
                 </div>
 
@@ -209,6 +291,10 @@ const VerificationForm = () => {
                     ? `Resend OTP in ${mobileTimer}s`
                     : "Resend OTP"}
                 </button>
+
+                {mobileOTPError && (
+                  <p className="text-xs text-red-500">{mobileOTPError}</p>
+                )}
               </div>
             )}
           </div>

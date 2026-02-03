@@ -1,21 +1,60 @@
 import React, { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { logIn } from "../services/auth.service";
-import { Link,  useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
   const { refreshUser } = useAuth();
   const navigate = useNavigate();
+
+  const validateEmail = (value) => {
+    if (!value) return "Email is required";
+    if (!/^\S+@\S+\.\S+$/.test(value)) return "Invalid email address";
+    return "";
+  };
+
+  const validatePassword = (value) => {
+    if (!value) return "Password is required";
+    return "";
+  };
+
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+    setEmailError(validateEmail(value));
+  };
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+    setPasswordError(validatePassword(value));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const emailErr = validateEmail(email);
+    const passErr = validatePassword(password);
+
+    setEmailError(emailErr);
+    setPasswordError(passErr);
+
+    if (emailErr || passErr) {
+      toast.error("Please fix the errors");
+      return;
+    }
+
     try {
       // 1️⃣ Login (sets cookies)
       await logIn({ email, password });
+      toast.success("Login successful");
 
       // 2️⃣ Fetch fresh user from backend
       const user = await refreshUser();
@@ -28,7 +67,7 @@ const Login = () => {
       }
     } catch (err) {
       console.error(err);
-      alert("Invalid credentials");
+      toast.error("Invalid email or password");
     }
   };
 
@@ -70,12 +109,13 @@ const Login = () => {
               id="email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
               className="h-10 rounded-md border border-gray-300 px-2 text-sm
                          focus:outline-none focus:ring-2 focus:ring-black/80"
               required
             />
           </div>
+          {emailError && <p className="text-xs text-red-500">{emailError}</p>}
 
           {/* Password */}
           <div className="flex flex-col gap-1">
@@ -89,12 +129,15 @@ const Login = () => {
               id="password"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
               className="h-10 rounded-md border border-gray-300 px-2 text-sm
                          focus:outline-none focus:ring-2 focus:ring-black/80"
               required
             />
           </div>
+          {passwordError && (
+            <p className="text-xs text-red-500">{passwordError}</p>
+          )}
 
           {/* Submit */}
           <button
