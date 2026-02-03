@@ -5,14 +5,16 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Verification from "./pages/Verification";
 import AuthLayout from "./Components/layouts/AuthLayout";
 import RequireVerification from "./Components/layouts/RequireVerification";
+import LoggedInLayout from "./Components/layouts/LoggedInLayout";
 
 const App = () => {
   return (
     <div>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/verification" element={<Verification />} />
+        <Route element={<LoggedInLayout />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+        </Route>
         <Route element={<AuthLayout />}>
           <Route path="/verification" element={<Verification />} />
         </Route>
