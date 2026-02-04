@@ -17,8 +17,6 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    debugger
-    console.log("original Request : " , originalRequest)
 
     if (!error.response) {
       return Promise.reject(error);
