@@ -7,6 +7,8 @@ import AuthLayout from "./Components/layouts/AuthLayout";
 import RequireVerification from "./Components/layouts/RequireVerification";
 import LoggedInLayout from "./Components/layouts/LoggedInLayout";
 import { Toaster } from "react-hot-toast";
+import HomePage from "./pages/HomePage";
+import CartPage from "./pages/CartPage";
 
 const App = () => {
   return (
@@ -22,8 +24,8 @@ const App = () => {
         </Route>
         <Route element={<AuthLayout />}>
           <Route element={<RequireVerification />}>
-            <Route path="/" element={<h1>Welcome to the App</h1>} />
-            <Route path="/profile" element={<LoginPage />} />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/cart" element={<CartPage />} />
           </Route>
         </Route>
       </Routes>

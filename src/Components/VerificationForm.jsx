@@ -110,7 +110,7 @@ const VerificationForm = () => {
 
       await refreshUser();
     } catch (err) {
-      toast.error("Invalid or expired Email OTP");
+      toast.error(err?.response?.data?.message || "Invalid or expired Email OTP");
     } finally {
       setEmailLoading(false);
     }
@@ -142,7 +142,7 @@ const VerificationForm = () => {
 
       await refreshUser();
     } catch (err) {
-      toast.error("Invalid or expired Mobile OTP");
+      toast.error(err?.response?.data?.message ||"Invalid or expired Mobile OTP");
     } finally {
       setMobileLoading(false);
     }

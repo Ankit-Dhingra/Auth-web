@@ -66,8 +66,8 @@ const Login = () => {
         navigate("/verification", { replace: true });
       }
     } catch (err) {
-      console.error(err);
-      toast.error("Invalid email or password");
+      console.error("tetett" ,err);
+      toast.error(err?.response?.data?.message ||"Invalid email or password");
     }
   };
 
