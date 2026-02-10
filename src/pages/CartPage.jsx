@@ -1,12 +1,13 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addToCart, removeFromCart } from "../utils/cartSlice";
+import { addToCart, clearCart, removeFromCart } from "../utils/cartSlice";
+import { NavLink } from "react-router-dom";
 
 const CartPage = () => {
   const dispatch = useDispatch();
 
   // GET NORMALIZED CART
-  const { items } = useSelector((store) => store.cart);
+  const { items, totalAmount } = useSelector((store) => store.cart);
 
   const cartItems = Object.values(items || {});
 
@@ -23,6 +24,14 @@ const CartPage = () => {
 
   return (
     <div className="max-w-5xl mx-auto mt-8 space-y-4">
+      <div>
+        <button
+          className="px-4 py-2 bg-red-500 rounded-md text-white"
+          onClick={() => dispatch(clearCart())}
+        >
+          Clear Cart
+        </button>
+      </div>
       {cartItems.map((product) => (
         <div
           key={product.id}
@@ -63,6 +72,19 @@ const CartPage = () => {
           </div>
         </div>
       ))}
+
+      <div className="border border-m-2 w-1/5 text-center italic">
+        Total Cart Value : <span className="font-bold text-gray-600">₹{totalAmount}</span>
+      </div>
+
+      <div className="w-full">
+        <NavLink
+          to="/checkout"
+          className="block w-full py-2 bg-blue-600 rounded-md text-white font-bold text-center"
+        >
+          Checkout
+        </NavLink>
+      </div>
     </div>
   );
 };

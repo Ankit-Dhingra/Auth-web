@@ -9,8 +9,6 @@ const Navbar = () => {
   const {user} = useAuth();
 
   const cartCount = useSelector((store) => store?.cart?.totalQuantity);
-  const cart = useSelector((store) => store?.cart);
-  console.log("check cart : " , cart )
 
   const handleLogout = () => {
     console.log("Logout clicked");
