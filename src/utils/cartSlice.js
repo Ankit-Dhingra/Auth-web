@@ -1,16 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+/*
+==================================================
+LOAD CART FROM LOCAL STORAGE
+==================================================
+*/
+
 const loadCartFromStorage = () => {
   try {
     const data = localStorage.getItem("cart");
-    return data
-      ? JSON.parse(data)
-      : {
-          items: {},
-          totalQuantity: 0,
-          totalAmount: 0,
-        };
-  } catch {
+
+    if (!data) {
+      return {
+        items: {},
+        totalQuantity: 0,
+        totalAmount: 0,
+      };
+    }
+
+    return JSON.parse(data);
+  } catch (error) {
     return {
       items: {},
       totalQuantity: 0,
@@ -19,18 +28,41 @@ const loadCartFromStorage = () => {
   }
 };
 
-const initialState = {
-  items: loadCartFromStorage(), // productId -> product
-  totalQuantity: 0,
-  totalAmount: 0,
+/*
+==================================================
+SAVE CART TO LOCAL STORAGE
+==================================================
+*/
+
+const saveCartToStorage = (state) => {
+  localStorage.setItem("cart", JSON.stringify(state));
 };
+
+/*
+==================================================
+INITIAL STATE
+IMPORTANT:
+Loader returns FULL cart state
+NOT nested inside items
+==================================================
+*/
+
+const initialState = loadCartFromStorage();
+
+/*
+==================================================
+SLICE
+==================================================
+*/
 
 const cartSlice = createSlice({
   name: "cart",
   initialState,
+
   reducers: {
     addToCart: (state, action) => {
       const product = action.payload;
+
       const existingItem = state.items[product.id];
 
       if (existingItem) {
@@ -44,6 +76,8 @@ const cartSlice = createSlice({
 
       state.totalQuantity += 1;
       state.totalAmount += product.price;
+
+      saveCartToStorage(state);
     },
 
     removeFromCart: (state, action) => {
@@ -59,9 +93,17 @@ const cartSlice = createSlice({
       if (existingItem.quantity === 0) {
         delete state.items[productId];
       }
+
+      saveCartToStorage(state);
     },
 
-    clearCart: () => initialState,
+    clearCart: (state) => {
+      state.items = {};
+      state.totalQuantity = 0;
+      state.totalAmount = 0;
+
+      saveCartToStorage(state);
+    },
   },
 });
 
