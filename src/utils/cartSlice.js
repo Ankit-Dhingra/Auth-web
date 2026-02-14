@@ -63,12 +63,12 @@ const cartSlice = createSlice({
     addToCart: (state, action) => {
       const product = action.payload;
 
-      const existingItem = state.items[product.id];
+      const existingItem = state.items[product._id];
 
       if (existingItem) {
         existingItem.quantity += 1;
       } else {
-        state.items[product.id] = {
+        state.items[product._id] = {
           ...product,
           quantity: 1,
         };

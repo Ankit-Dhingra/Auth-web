@@ -12,6 +12,7 @@ import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import OrderSuccessPage from "./pages/OrderSuccessPage";
 import MyOrdersPage from "./pages/MyOrdersPage";
+import SearchResult from "./Components/SearchResult";
 
 const App = () => {
   return (
@@ -32,6 +33,7 @@ const App = () => {
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/order-success" element={<OrderSuccessPage />} />
             <Route path="/my-orders" element={<MyOrdersPage />} />
+            <Route path="/products" element={<SearchResult />} />
           </Route>
         </Route>
       </Routes>

@@ -55,7 +55,7 @@ const CartPage = () => {
           {/* RIGHT SIDE - QUANTITY */}
           <div className="flex items-center border rounded">
             <button
-              onClick={() => dispatch(removeFromCart(product.id))}
+              onClick={() => dispatch(removeFromCart(product._id))}
               className="px-4 py-2"
             >
               -

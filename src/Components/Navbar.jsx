@@ -1,19 +1,29 @@
 import React, { useState, useRef, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useSelector } from "react-redux";
-import { RiSearchLine, RiShoppingCart2Line, RiUser3Line } from "@remixicon/react";
+import {
+  RiSearchLine,
+  RiShoppingCart2Line,
+  RiUser3Line,
+} from "@remixicon/react";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
   const { user } = useAuth();
+  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
   const cartCount = useSelector((store) => store?.cart?.totalQuantity);
 
   const handleLogout = () => {
     console.log("Logout clicked");
   };
+
+  const handleSearch = () => {
+    navigate(`/products?search=${search}`)
+  }
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -27,13 +37,13 @@ const Navbar = () => {
   }, []);
 
   const navLinkStyle = ({ isActive }) =>
-    `block px-4 py-2 hover:bg-gray-100 ${isActive ? "bg-blue-100 text-blue-600" : ""
+    `block px-4 py-2 hover:bg-gray-100 ${
+      isActive ? "bg-blue-100 text-blue-600" : ""
     }`;
 
   return (
     <div className="w-full border-b">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-
         {/* LEFT - Logo */}
         <NavLink to="/" className="flex items-center">
           <img
@@ -49,18 +59,21 @@ const Navbar = () => {
             <input
               type="text"
               placeholder="Search..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               className="w-full px-10 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
             />
 
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer">
+              <button onClick={handleSearch}>
               <RiSearchLine />
+              </button>
             </div>
           </div>
         </div>
 
         {/* RIGHT SIDE */}
         <div className="flex items-center gap-4">
-
           {/* CART ICON */}
           <NavLink
             to="/cart"
@@ -90,7 +103,7 @@ const Navbar = () => {
                   Welcome {user?.firstName + " " + user?.lastName || "User"}
                 </div>
 
-                <NavLink to="/orders" className={navLinkStyle}>
+                <NavLink to="/my-orders" className={navLinkStyle}>
                   My Orders
                 </NavLink>
 
@@ -107,11 +120,9 @@ const Navbar = () => {
               </div>
             )}
           </div>
-
         </div>
       </div>
     </div>
-
   );
 };
 
