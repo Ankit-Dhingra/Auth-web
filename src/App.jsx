@@ -13,12 +13,14 @@ import CheckoutPage from "./pages/CheckoutPage";
 import OrderSuccessPage from "./pages/OrderSuccessPage";
 import MyOrdersPage from "./pages/MyOrdersPage";
 import SearchResult from "./Components/SearchResult";
+import DebounceButton from "./Components/DebounceButton";
 
 const App = () => {
   return (
     <div>
       <Toaster position="top-center" />
       <Routes>
+        <Route path="/debounce" element={<DebounceButton />}></Route>
         <Route element={<LoggedInLayout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
