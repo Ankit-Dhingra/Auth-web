@@ -12,12 +12,32 @@ const DebounceButton = () => {
     };
   }
 
+  function throttle(fn, delay) {
+    let lastCall = 0;
+
+    return function (...args) {
+      let now = Date.now();
+
+      if (now - lastCall < delay) {
+        return;
+      }
+      lastCall = now;
+      return fn(...args);
+    };
+  }
+
   const searchAPI = (value) => {
     console.log("Search for : ", value);
   };
 
-  const debouncedSearch = useMemo(() => {
+  // Debounce Version
+  const debouncedSearch1 = useMemo(() => {
     return debounce(searchAPI, 500);
+  }, []);
+
+  // Throttle
+  const debouncedSearch = useMemo(() => {
+    return throttle(searchAPI, 500);
   }, []);
 
   const handleClick = (e) => {
