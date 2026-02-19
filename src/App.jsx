@@ -14,6 +14,7 @@ import OrderSuccessPage from "./pages/OrderSuccessPage";
 import MyOrdersPage from "./pages/MyOrdersPage";
 import SearchResult from "./Components/SearchResult";
 import DebounceButton from "./Components/DebounceButton";
+import ContactUs from "./Components/ContactUs";
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
       <Toaster position="top-center" />
       <Routes>
         <Route path="/debounce" element={<DebounceButton />}></Route>
+        <Route path="/contactUs" element={<ContactUs />}></Route>
         <Route element={<LoggedInLayout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
