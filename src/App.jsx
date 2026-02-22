@@ -15,6 +15,8 @@ import MyOrdersPage from "./pages/MyOrdersPage";
 import SearchResult from "./Components/SearchResult";
 import DebounceButton from "./Components/DebounceButton";
 import ContactUs from "./Components/ContactUs";
+import UseRefLearn from "./Components/UseRefLearn";
+import UseReducerForm from "./Components/UseReducerForm";
 
 const App = () => {
   return (
@@ -23,6 +25,8 @@ const App = () => {
       <Routes>
         <Route path="/debounce" element={<DebounceButton />}></Route>
         <Route path="/contactUs" element={<ContactUs />}></Route>
+        <Route path="/userRef" element={<UseRefLearn />}></Route>
+        <Route path="/userReducer" element={<UseReducerForm />}></Route>
         <Route element={<LoggedInLayout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
