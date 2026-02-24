@@ -8,7 +8,7 @@ import { Provider } from "react-redux";
 import appStore from "./utils/configStore.js";
 
 createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
         <Provider store={appStore}>
@@ -16,5 +16,5 @@ createRoot(document.getElementById("root")).render(
         </Provider>
       </AuthProvider>
     </BrowserRouter>
-  </React.StrictMode>,
+  // </React.StrictMode>,
 );
