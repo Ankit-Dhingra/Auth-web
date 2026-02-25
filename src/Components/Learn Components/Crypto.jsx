@@ -21,7 +21,7 @@ const Crypto = () => {
         );
 
         if (data.length === 0) {
-          setHasMore(true);
+          setHasMore(false);
           return;
         }
         setCoins((prev) => [...prev, ...data]);
