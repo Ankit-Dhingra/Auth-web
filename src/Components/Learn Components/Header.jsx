@@ -34,7 +34,7 @@ const Header = () => {
   };
 
   const debounceSearchSuggestion = useMemo(
-    () => debounceSearch(fetchSuggestions, 300),
+    () => debounceSearch(fetchSuggestions, 200),
     [],
   );
 
