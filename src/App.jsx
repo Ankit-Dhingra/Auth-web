@@ -18,12 +18,14 @@ import ContactUs from "./Components/ContactUs";
 import UseRefLearn from "./Components/UseRefLearn";
 import UseReducerForm from "./Components/UseReducerForm";
 import Crypto from "./Components/Learn Components/Crypto";
+import ProductsPage from "./Components/Learn Components/ProductsPage";
 
 const App = () => {
   return (
     <div>
       <Toaster position="top-center" />
       <Routes>
+        <Route path="/products" element={<ProductsPage />}></Route>
         <Route path="/debounce" element={<DebounceButton />}></Route>
         <Route path="/crypto" element={<Crypto />}></Route>
         <Route path="/contactUs" element={<ContactUs />}></Route>

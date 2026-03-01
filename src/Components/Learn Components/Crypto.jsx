@@ -17,7 +17,7 @@ const Crypto = () => {
       try {
         setLoading(true);
         const { data } = await axios.get(
-          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=${page}&sparkline=false`,
+          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=5&page=${page}&sparkline=false`,
         );
 
         if (data.length === 0) {
@@ -68,7 +68,7 @@ const Crypto = () => {
     const observer = new IntersectionObserver((entries) => {
       const firstEntry = entries[0];
 
-      if (firstEntry.isIntersecting && hasMore && !loading) {
+      if (firstEntry.isIntersecting && hasMore) {
         setPage((prev) => prev + 1);
       }
     });
@@ -82,7 +82,7 @@ const Crypto = () => {
     return () => {
       observer.disconnect(); // cleaner cleanup
     };
-  }, []); // attach once
+  }, [hasMore]); // attach once
 
   return (
     <div className="min-h-screen bg-black">
